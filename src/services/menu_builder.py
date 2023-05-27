@@ -35,10 +35,18 @@ class MenuBuilder:
                 "ingredients": dish.get_ingredients(),
             }
             for dish in self.menu_data.dishes
-            if restriction not in dish.get_restrictions()
+            if (
+                restriction is None
+                or restriction not in dish.get_restrictions()
+            )
+            and self.inventory.check_recipe_availability(dish.recipe)
         ]
 
-        return pd.DataFrame(
-            menu_data,
-            columns=["dish_name", "price", "restrictions", "ingredients"],
+        return (
+            pd.DataFrame()
+            if not menu_data
+            else pd.DataFrame(
+                menu_data,
+                columns=["dish_name", "price", "restrictions", "ingredients"],
+            )
         )
